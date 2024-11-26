@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trò chơi hỏi đáp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .correct {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .wrong {
+            background-color: #f44336;
+            color: white;
+        }
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trò chơi ai thông minh nhất</h1>
+        <p id="question">Câu hỏi sẽ hiển thị ở đây...</p>
+        <div id="options">
+            <!-- Các nút chọn đáp án sẽ được tạo động -->
+        </div>
+        <p id="result" class="result"></p>
+        <button onclick="nextQuestion()">Câu tiếp theo</button>
+        <p id="score">Điểm: 0</p>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "thủ đô việt nam là gì",
+                options: ["Hà Nội", "TP.HCM", "Đà Nẵng", "Huế"],
+                answer: "Hà Nội"
+            },
+            {
+                question: "2 + 2 bằng bao nhiêu?",
+                options: ["3", "4", "5", "6"],
+                answer: "4"
+            },
+            {
+                question: "Loài vật nào được mệnh danh là chúa sơn lâm?",
+                options: ["Hổ", "Voi", "Báo", "Chó"],
+                answer: "Hổ"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        // Hiển thị câu hỏi
+        function showQuestion() {
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            const resultElement = document.getElementById("result");
+
+            // Xóa các nút cũ
+            optionsElement.innerHTML = "";
+            resultElement.innerText = ""; // Xóa thông báo trước đó
+
+            // Lấy câu hỏi hiện tại
+            const question = questions[currentQuestion];
+
+            // Cập nhật câu hỏi
+            questionElement.innerText = question.question;
+
+            // Tạo nút đáp án
+            question.options.forEach(option => {
+                const button = document.createElement("button");
+                button.innerText = option;
+                button.onclick = () => checkAnswer(option);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        // Kiểm tra đáp án
+        function checkAnswer(selectedOption) {
+            const question = questions[currentQuestion];
+            const resultElement = document.getElementById("result");
+            const buttons = document.getElementById("options").children;
+
+            // Kiểm tra đúng hay sai
+            if (selectedOption === question.answer) {
+                score++;
+                document.getElementById("score").innerText = `Điểm: ${score}`;
+                resultElement.innerText = "Chính xác! 🎉";
+                resultElement.style.color = "#4CAF50";
+            } else {
+                resultElement.innerText = `Sai rồi! Đáp án đúng là: ${question.answer}`;
+                resultElement.style.color = "#f44336";
+            }
+
+            // Disable tất cả nút
+            for (const button of buttons) {
+                button.disabled = true;
+                if (button.innerText === question.answer) {
+                    button.classList.add("correct");
+                } else if (button.innerText === selectedOption) {
+                    button.classList.add("wrong");
+                }
+            }
+        }
+
+        // Chuyển sang câu tiếp theo
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                const resultElement = document.getElementById("result");
+                resultElement.innerText = `Trò chơi kết thúc! Bạn đạt được ${score}/${questions.length} điểm.`;
+                resultElement.style.color = "#000";
+
+                // Reset game sau khi hoàn thành
+                currentQuestion = 0;
+                score = 0;
+                document.getElementById("score").innerText = `Điểm: 0`;
+                setTimeout(showQuestion, 3000); // Hiển thị lại sau 3 giây
+            }
+        }
+
+        // Khởi chạy câu hỏi đầu tiên
+        showQuestion();
+    </script>
+</body>
+</html>
